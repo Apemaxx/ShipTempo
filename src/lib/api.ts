@@ -1,5 +1,4 @@
 import axios from "axios";
-import { createClient } from "@supabase/supabase-js";
 import { BillingCode, Invoice, CreditMemo, InvoiceItem } from "@/types/billing";
 import {
   XanoContainerResponse,
@@ -9,10 +8,10 @@ import {
 } from "@/types/api";
 import { API_BASE_URL, ZIPCODE_API_BASE_URL } from "@/config";
 
-// Initialize Supabase client
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Mock API client (replacing Supabase)
+export const mockApiClient = {
+  // This will be used as a temporary replacement for Supabase client
+};
 
 // Container interface (now sourced from Xano API)
 export interface STGContainer extends XanoContainerResponse {}

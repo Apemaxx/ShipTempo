@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Truck, Package, MapPin, Calendar, Info } from "lucide-react";
 import ProNumberManager from "./ProNumberManager";
-import { supabase } from "@/lib/api";
+// Removed Supabase import
 
 interface ShipmentTrackingProps {
   shipmentId: string;
@@ -39,19 +39,9 @@ export default function ShipmentTracking({
   useEffect(() => {
     const fetchShipment = async () => {
       try {
-        // Attempt to fetch from Supabase
-        const { data, error } = await supabase
-          .from("shipments")
-          .select("*")
-          .eq("id", shipmentId)
-          .single();
-
-        if (error) throw error;
-
-        if (data) {
-          setShipment(data as ShipmentData);
-        } else {
-          // If no data in Supabase, use mock data
+        // Using mock data since Supabase has been removed
+        // In a real implementation, this would be replaced with a different API call
+        setTimeout(() => {
           setShipment({
             id: shipmentId,
             origin: "Los Angeles, CA",
@@ -63,47 +53,26 @@ export default function ShipmentTracking({
             weight: 1500,
             pieces: 10,
           });
-        }
+          setLoading(false);
+        }, 500); // Simulate network delay
       } catch (err) {
         console.error("Error fetching shipment:", err);
-        // Fallback to mock data on error
-        setShipment({
-          id: shipmentId,
-          origin: "Los Angeles, CA",
-          destination: "New York, NY",
-          status: "In Transit",
-          estimated_delivery: "2023-06-15",
-          carrier_id: "",
-          pro_number: "",
-          weight: 1500,
-          pieces: 10,
-        });
-      } finally {
+        setError("Failed to load shipment data");
         setLoading(false);
       }
     };
 
     fetchShipment();
 
-    // Set up realtime subscription for shipment updates
-    const subscription = supabase
-      .channel("shipment-updates")
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "shipments",
-          filter: `id=eq.${shipmentId}`,
-        },
-        (payload) => {
-          setShipment(payload.new as ShipmentData);
-        },
-      )
-      .subscribe();
+    // Mock subscription for shipment updates
+    // In a real implementation, this would be replaced with a different real-time solution
+    const intervalId = setInterval(() => {
+      // This is just to simulate real-time updates
+      // No actual updates will happen in this mock implementation
+    }, 30000);
 
     return () => {
-      subscription.unsubscribe();
+      clearInterval(intervalId);
     };
   }, [shipmentId]);
 
