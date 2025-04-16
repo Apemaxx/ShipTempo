@@ -354,7 +354,7 @@ const AuthService = {
 
     // Redirect to login page if navigation is available
     if (navigate) {
-      navigate("/signin");
+      window.location.reload(); // Reload the page to clear any cached data
     } else {
       console.warn(
         "Navigation function not set in AuthService. Call setNavigate() to enable automatic redirects."
