@@ -16,6 +16,7 @@ export interface RegisterData {
 export interface LoginData {
   email: string;
   password: string;
+  rememberMe: boolean;
 }
 
 export interface User {
@@ -61,52 +62,83 @@ const API_CONFIG = {
     ME: "/auth/me",
     REFRESH: "/auth/refresh",
   },
-  TOKEN_BUFFER_TIME: 1 * 60 * 1000, // 1 minute before expiration
+  TOKEN_BUFFER_TIME: 0.5 * 60 * 1000, // 1 minute before expiration
 };
 
 // Router navigation (initialized by the service user)
 let navigate: ((path: string) => void) | null = null;
 
+// Storage preference (determined by rememberMe option)
+let useLocalStorage = true;
+
 // Utilities for token management
 const TokenService = {
+  // Helper to determine which storage to use based on rememberMe preference
+  getStorage: (): Storage => {
+    return useLocalStorage ? localStorage : sessionStorage;
+  },
+
   getAuthToken: (): string | null => {
-    return localStorage.getItem("authToken");
+    return (
+      TokenService.getStorage().getItem("authToken") ||
+      localStorage.getItem("authToken")
+    );
   },
 
   getRefreshToken: (): string | null => {
-    return localStorage.getItem("refreshToken");
+    return (
+      TokenService.getStorage().getItem("refreshToken") ||
+      localStorage.getItem("refreshToken")
+    );
   },
 
   getTokenExpiration: (): number => {
-    const expStr = localStorage.getItem("tokenExpirationDate");
+    const expStr =
+      TokenService.getStorage().getItem("tokenExpirationDate") ||
+      localStorage.getItem("tokenExpirationDate");
     return expStr ? parseInt(expStr, 10) : 0;
   },
 
   getRefreshTokenExpiration: (): number => {
-    const expStr = localStorage.getItem("refreshTokenExpirationDate");
+    const expStr =
+      TokenService.getStorage().getItem("refreshTokenExpirationDate") ||
+      localStorage.getItem("refreshTokenExpirationDate");
     return expStr ? parseInt(expStr, 10) : 0;
   },
 
-  setAuthData: (data: AuthResponse): void => {
-    localStorage.setItem("authToken", data.authToken);
-    localStorage.setItem("refreshToken", data.refreshToken);
-    localStorage.setItem(
-      "tokenExpirationDate",
-      data.tokenExpirationDate.toString()
-    );
-    localStorage.setItem(
+  setAuthData: (
+    data: AuthResponse,
+    remember: boolean = useLocalStorage
+  ): void => {
+    // Update the storage preference
+    useLocalStorage = remember;
+
+    const storage = TokenService.getStorage();
+
+    storage.setItem("authToken", data.authToken);
+    storage.setItem("refreshToken", data.refreshToken);
+    storage.setItem("tokenExpirationDate", data.tokenExpirationDate.toString());
+    storage.setItem(
       "refreshTokenExpirationDate",
       data.refreshTokenExpirationDate.toString()
     );
-    localStorage.setItem("user", JSON.stringify(data.payload));
+    storage.setItem("user", JSON.stringify(data.payload));
   },
 
   clearAuthData: (): void => {
+    // Clear from both storages to ensure complete logout
     localStorage.removeItem("authToken");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("tokenExpirationDate");
     localStorage.removeItem("refreshTokenExpirationDate");
     localStorage.removeItem("user");
+    localStorage.removeItem("rememberMe");
+
+    sessionStorage.removeItem("authToken");
+    sessionStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("tokenExpirationDate");
+    sessionStorage.removeItem("refreshTokenExpirationDate");
+    sessionStorage.removeItem("user");
   },
 
   isTokenExpired: (): boolean => {
@@ -117,11 +149,17 @@ const TokenService = {
 
   isRefreshTokenExpired: (): boolean => {
     const expiration = TokenService.getRefreshTokenExpiration();
+
+    console.log("Refresh token expiration:", new Date(expiration));
+    console.log("Current time:", new Date(Date.now()));
+    console.log("Is refresh token expired?", Date.now() >= expiration);
+
     return Date.now() >= expiration;
   },
 
   getUser: (): User | null => {
-    const userStr = localStorage.getItem("user");
+    const userStr =
+      TokenService.getStorage().getItem("user") || localStorage.getItem("user");
     if (!userStr) return null;
 
     try {
@@ -174,7 +212,8 @@ const refreshToken = async (): Promise<string | null> => {
         }
       )
       .then((response) => {
-        TokenService.setAuthData(response.data);
+        // When refreshing token, maintain the current storage preference
+        TokenService.setAuthData(response.data, useLocalStorage);
         return response.data.authToken;
       })
       .catch((error) => {
@@ -213,64 +252,6 @@ const refreshToken = async (): Promise<string | null> => {
   }
 };
 
-// Request interceptor to add authentication token
-api.interceptors.request.use(
-  async (config: InternalAxiosRequestConfig) => {
-    // If token is missing or about to expire, try to refresh it
-    if (
-      TokenService.getAuthToken() &&
-      TokenService.isTokenExpired() &&
-      !config.url?.includes(API_CONFIG.ENDPOINTS.REFRESH)
-    ) {
-      try {
-        // Try to refresh the token before the request
-        const newToken = await refreshToken();
-        if (newToken) {
-          config.headers.Authorization = `Bearer ${newToken}`;
-        }
-      } catch (error) {
-        console.warn("Failed to refresh token before request", error);
-        // Continue with the request and let the response interceptor handle 401 errors
-      }
-    } else if (TokenService.getAuthToken()) {
-      config.headers.Authorization = `Bearer ${TokenService.getAuthToken()}`;
-    }
-
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// Simplified response interceptor to handle authentication errors
-api.interceptors.response.use(
-  (response) => response,
-  (error: AxiosError) => {
-    // If it's a 401 (unauthorized) error, clear the session and emit event
-    if (error.response?.status === 401) {
-      // Only clear the session if we're not already in the refresh process
-      if (
-        !isRefreshing &&
-        !error.config?.url?.includes(API_CONFIG.ENDPOINTS.REFRESH)
-      ) {
-        TokenService.clearAuthData();
-
-        // Emit logout event so components can react
-        const event = new CustomEvent("auth:logout", {
-          detail: { reason: "unauthorized", status: 401 },
-        });
-        window.dispatchEvent(event);
-
-        // Redirect to login if navigation is available
-        if (navigate) {
-          navigate("/signin");
-        }
-      }
-    }
-
-    return Promise.reject(error);
-  }
-);
-
 // Authentication service
 const AuthService = {
   /**
@@ -290,7 +271,9 @@ const AuthService = {
         data
       );
 
-      TokenService.setAuthData(response.data);
+      // For registration, always use localStorage (equivalent to rememberMe = true)
+      TokenService.setAuthData(response.data, true);
+      localStorage.setItem("rememberMe", "true");
 
       // Emit login event
       const event = new CustomEvent("auth:login", {
@@ -321,7 +304,11 @@ const AuthService = {
         data
       );
 
-      TokenService.setAuthData(response.data);
+      // Use the rememberMe flag to determine storage type
+      TokenService.setAuthData(response.data, data.rememberMe);
+
+      // Store the rememberMe preference for API client to use
+      localStorage.setItem("rememberMe", data.rememberMe.toString());
 
       // Emit login event
       const event = new CustomEvent("auth:login", {
@@ -390,7 +377,7 @@ const AuthService = {
         await refreshToken();
       }
 
-      // First try to get from local storage for performance
+      // First try to get from storage for performance
       const cachedUser = TokenService.getUser();
       if (cachedUser) {
         return cachedUser;
@@ -399,9 +386,12 @@ const AuthService = {
       // If no cached data, query the server
       const response = await api.get(API_CONFIG.ENDPOINTS.ME);
 
-      // Update user in local storage
+      // Update user in storage
       if (response.data.payload) {
-        localStorage.setItem("user", JSON.stringify(response.data.payload));
+        TokenService.getStorage().setItem(
+          "user",
+          JSON.stringify(response.data.payload)
+        );
       }
 
       return response.data.payload;

@@ -1,16 +1,16 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { z } from "zod";
 import { Eye, EyeOff, LogIn } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { z } from "zod";
 
 // Improved validation schema
 const formSchema = z.object({
@@ -37,7 +37,7 @@ const SignIn = () => {
     defaultValues: {
       email: "",
       password: "",
-      rememberMe: false,
+      rememberMe: true,
     },
   });
 
@@ -56,6 +56,7 @@ const SignIn = () => {
       await login({
         email: data.email,
         password: data.password,
+        rememberMe: data.rememberMe, // Pass remember me flag if your AuthService supports it
         // Pass remember me flag if your AuthService supports it
       });
       
