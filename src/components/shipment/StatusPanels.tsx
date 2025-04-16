@@ -30,7 +30,7 @@ interface StatusPanelsProps {
     | "booking"
     | "documentation"
     | "customs"
-    | "transit"
+    | "in-transit"
     | "delivered";
 }
 

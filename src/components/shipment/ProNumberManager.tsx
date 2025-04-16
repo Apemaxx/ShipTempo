@@ -17,7 +17,7 @@ import {
   storeProNumber,
   getCarrierEndpoints,
 } from "@/lib/api";
-import { trackShipmentEvent } from "@/App";
+import { trackShipmentEvent } from "../../utils/tracking";
 
 interface ProNumberManagerProps {
   shipmentId: string;

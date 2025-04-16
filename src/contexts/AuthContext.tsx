@@ -5,16 +5,8 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import {
-  User,
-  getCurrentUser,
-  login as authLogin,
-  register as authRegister,
-  logout as authLogout,
-  refreshToken,
-  LoginData,
-  RegisterData,
-} from "../services/auth";
+import { useNavigate } from "react-router-dom";
+import AuthService, { LoginData, RegisterData, User } from "../services/auth";
 
 interface AuthContextType {
   user: User | null;
@@ -46,18 +38,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  
+  // Initialize the auth service with navigation function
+  useEffect(() => {
+    AuthService.setNavigate(navigate);
+  }, [navigate]);
 
-  // Function to refresh the session using the refresh token
+  // Updated refreshSession to use AuthService.getCurrentUser
   const refreshSession = async (): Promise<boolean> => {
     try {
-      const newToken = await refreshToken();
-      if (newToken) {
-        // If refresh successful, get user from sessionStorage
-        const userStr = sessionStorage.getItem("user");
-        if (userStr) {
-          setUser(JSON.parse(userStr));
-          return true;
-        }
+      // The getCurrentUser method already handles token refresh
+      const currentUser = await AuthService.getCurrentUser();
+      if (currentUser) {
+        setUser(currentUser);
+        return true;
       }
       return false;
     } catch (err) {
@@ -66,26 +61,44 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  // Setup auth event listeners
+  useEffect(() => {
+    const handleLogout = () => {
+      setUser(null);
+    };
+
+    const handleLogin = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail?.user) {
+        setUser(customEvent.detail.user);
+      }
+    };
+
+    // Add event listeners
+    AuthService.onAuthEvent("logout", handleLogout as any);
+    AuthService.onAuthEvent("login", handleLogin as any);
+
+    // Remove event listeners on cleanup
+    return () => {
+      AuthService.offAuthEvent("logout", handleLogout as any);
+      AuthService.offAuthEvent("login", handleLogin as any);
+    };
+  }, []);
+
   useEffect(() => {
     // Check if user is already logged in
     const loadUser = async () => {
       try {
-        // First try to get the current user with the existing token
-        const currentUser = await getCurrentUser();
+        // Use the getCurrentUser method which handles token refresh internally
+        const currentUser = await AuthService.getCurrentUser();
         if (currentUser) {
           setUser(currentUser);
         } else {
-          // If that fails, try to refresh the session
-          const refreshed = await refreshSession();
-          if (!refreshed) {
-            // If refresh fails, clear any stale user data
-            setUser(null);
-          }
+          setUser(null);
         }
       } catch (err) {
         console.error("Failed to load user:", err);
-        // Try to refresh the session if loading fails
-        await refreshSession();
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -98,10 +111,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       setLoading(true);
       setError(null);
-      const loggedInUser = await authLogin(data);
+      const loggedInUser = await AuthService.login(data);
       setUser(loggedInUser);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to login");
+      setError(err.message || "Failed to login");
       throw err;
     } finally {
       setLoading(false);
@@ -112,10 +125,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       setLoading(true);
       setError(null);
-      const newUser = await authRegister(data);
+      const newUser = await AuthService.register(data);
       setUser(newUser);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to register");
+      setError(err.message || "Failed to register");
       throw err;
     } finally {
       setLoading(false);
@@ -123,8 +136,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const logout = () => {
-    authLogout();
-    setUser(null);
+    AuthService.logout();
+    // No need to setUser(null) here as we're listening for the logout event
+    // and the AuthService will handle navigation to the login page
   };
 
   const clearError = () => {
@@ -148,6 +162,3 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     </AuthContext.Provider>
   );
 };
-
-// Export as named export only for Fast Refresh compatibility
-// No default export to ensure consistent exports

@@ -26,7 +26,7 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import { trackShipmentEvent } from "../../App";
+import { trackShipmentEvent } from "../../utils/tracking";
 
 export type ClaimStatus =
   | "draft"
@@ -200,7 +200,9 @@ const ClaimHandling = ({
       id: `comment-${Date.now()}`,
       author: "System",
       timestamp: new Date().toLocaleString(),
-      text: `Claim status changed from ${getStatusLabel(currentStatus)} to ${getStatusLabel(newStatus)}`,
+      text: `Claim status changed from ${getStatusLabel(
+        currentStatus
+      )} to ${getStatusLabel(newStatus)}`,
       isInternal: true,
     };
 
@@ -261,10 +263,10 @@ const ClaimHandling = ({
   // Handler for document status change
   const handleDocumentStatusChange = (
     docId: string,
-    newStatus: "approved" | "rejected",
+    newStatus: "approved" | "rejected"
   ) => {
     const updatedDocs = localDocuments.map((doc) =>
-      doc.id === docId ? { ...doc, status: newStatus } : doc,
+      doc.id === docId ? { ...doc, status: newStatus } : doc
     );
 
     setLocalDocuments(updatedDocs);
@@ -509,8 +511,16 @@ const ClaimHandling = ({
                           doc.status === "pending" ? "outline" : "secondary"
                         }
                         className={`
-                          ${doc.status === "approved" ? "bg-green-100 text-green-800 hover:bg-green-200" : ""}
-                          ${doc.status === "rejected" ? "bg-red-100 text-red-800 hover:bg-red-200" : ""}
+                          ${
+                            doc.status === "approved"
+                              ? "bg-green-100 text-green-800 hover:bg-green-200"
+                              : ""
+                          }
+                          ${
+                            doc.status === "rejected"
+                              ? "bg-red-100 text-red-800 hover:bg-red-200"
+                              : ""
+                          }
                         `}
                       >
                         {doc.status.charAt(0).toUpperCase() +
@@ -604,7 +614,11 @@ const ClaimHandling = ({
               {localComments.map((comment) => (
                 <div
                   key={comment.id}
-                  className={`p-3 rounded-md ${comment.isInternal ? "bg-yellow-50 border border-yellow-100" : "bg-muted/30"}`}
+                  className={`p-3 rounded-md ${
+                    comment.isInternal
+                      ? "bg-yellow-50 border border-yellow-100"
+                      : "bg-muted/30"
+                  }`}
                 >
                   <div className="flex items-center justify-between mb-1">
                     <div className="font-medium text-sm">{comment.author}</div>

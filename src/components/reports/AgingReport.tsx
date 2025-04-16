@@ -1,22 +1,9 @@
-import React, { useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Loader2, Search, FileDown, PieChart } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { FileDown, Loader2, PieChart, Search } from "lucide-react";
+import React, { useState } from "react";
 
 interface AgingReportProps {
   className?: string;
@@ -166,4 +153,14 @@ const AgingReport = ({ className = "" }: AgingReportProps) => {
 
     return matchesSearch && matchesStatus && matchesAging;
   });
+
+  return (
+    <div className={`aging-report ${className}`}>
+      <h1>Aging Report</h1>
+      {/* Aquí puedes agregar más contenido para renderizar la tabla y los filtros */}
+      <p>Filtrar y mostrar datos de facturas aquí.</p>
+    </div>
+  );
 };
+
+export default AgingReport;

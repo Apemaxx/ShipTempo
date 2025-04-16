@@ -7,7 +7,7 @@ import { Card, CardContent } from "../ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Button } from "../ui/button";
 import { ShieldAlert } from "lucide-react";
-import { trackShipmentEvent } from "../../App";
+import { trackShipmentEvent } from "../../utils/tracking";
 import { Link } from "react-router-dom";
 
 export type ShipmentStatus =

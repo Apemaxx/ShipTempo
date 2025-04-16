@@ -1,17 +1,11 @@
-import { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Truck, Package, MapPin, Calendar, Info } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Calendar, Info, MapPin, Package, Truck } from "lucide-react";
+import { useEffect, useState } from "react";
+
 import ProNumberManager from "./ProNumberManager";
-// Removed Supabase import
 
 interface ShipmentTrackingProps {
   shipmentId: string;
