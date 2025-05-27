@@ -43,7 +43,7 @@ export async function getCarrierEndpoints(): Promise<CarrierEndpoint[]> {
 
 // Search shipments by any reference
 export async function searchShipments(
-  query: string
+  query: string,
 ): Promise<ShipmentSearchResult[]> {
   if (!query || query.length < 3) return [];
 
@@ -54,7 +54,7 @@ export async function searchShipments(
         query,
         limit: 10,
       },
-      AUTH_CODE
+      AUTH_CODE,
     );
 
     // Transformar los datos para que coincidan con el formato esperado
@@ -84,12 +84,12 @@ export async function searchShipments(
 // Fetch PRO number from a specific carrier
 export async function fetchProNumber(
   carrierId: string,
-  shipmentDetails: any
+  shipmentDetails: any,
 ): Promise<string> {
   try {
     const endpoints = await getCarrierEndpoints();
     const carrierEndpoint = endpoints.find(
-      (endpoint) => endpoint.name === carrierId
+      (endpoint) => endpoint.name === carrierId,
     );
 
     if (!carrierEndpoint) {
@@ -115,7 +115,7 @@ export async function fetchProNumber(
     const response = await axios.post(
       carrierEndpoint.url,
       shipmentDetails,
-      config
+      config,
     );
 
     return response.data.proNumber || "";
@@ -128,7 +128,7 @@ export async function fetchProNumber(
 // Validate a PRO number format
 export function validateProNumber(
   proNumber: string,
-  carrierFormat?: string
+  carrierFormat?: string,
 ): boolean {
   if (!proNumber) return false;
 
@@ -152,7 +152,7 @@ export function validateProNumber(
 export async function storeProNumber(
   shipmentId: string,
   carrierId: string,
-  proNumber: string
+  proNumber: string,
 ): Promise<boolean> {
   try {
     await xanoApiClient.put(
@@ -161,7 +161,7 @@ export async function storeProNumber(
         pro_number: proNumber,
         carrier_id: carrierId,
       },
-      AUTH_CODE
+      AUTH_CODE,
     );
     return true;
   } catch (error) {
@@ -173,20 +173,35 @@ export async function storeProNumber(
 // ==================== LTL QUOTE API FUNCTIONS ====================
 import { LTLQuoteRequest, LTLQuoteResponse } from "@/types/api";
 
+import { createClient } from "@supabase/supabase-js";
+
+// Initialize Supabase client
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
 /**
- * Get LTL shipping rate quotes from Xano API
+ * Get LTL shipping rate quotes from Supabase Edge Function
  * @param payload - The request payload containing all quote parameters
  * @returns Promise with carrier quotes and rate information
  */
 export async function getLTLQuotes(
-  payload: LTLQuoteRequest
+  payload: LTLQuoteRequest,
 ): Promise<LTLQuoteResponse | null> {
   try {
-    const data = await xanoApiClient.post(
-      "/shipping/ltl/quotes",
-      payload,
-      AUTH_CODE
+    // Use the Supabase Edge Function instead of calling Xano directly
+    const { data, error } = await supabase.functions.invoke(
+      "supabase-functions-get-ltl-quotes",
+      {
+        body: payload,
+      },
     );
+
+    if (error) {
+      console.error("Error invoking edge function:", error);
+      throw new Error(error.message || "Failed to get quotes");
+    }
+
     return data as LTLQuoteResponse;
   } catch (error) {
     console.error("Error getting LTL quotes:", error);

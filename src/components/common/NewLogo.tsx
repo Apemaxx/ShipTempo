@@ -14,8 +14,8 @@ const NewLogo = ({
   return (
     <div className={`flex items-center justify-center ${className}`}>
       <img
-        src="/ape_global_logo.svg"
-        alt="APE Global Automated Logistics"
+        src="/amass_cwn_logo.jpg"
+        alt="AMASS CargoWorld Network"
         width={width}
         height={height}
         className="object-contain"

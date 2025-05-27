@@ -115,6 +115,36 @@ export interface LTLQuoteResponse {
   request_id: string;
 }
 
+// Database model for LTL Quotes
+export interface LTLQuoteRecord {
+  id: string;
+  user_id: string;
+  origin_zip: string;
+  origin_country: string;
+  destination_zip: string;
+  destination_country: string;
+  commodity: string;
+  pieces: number;
+  pallets: number;
+  packaging_type: string;
+  length: number;
+  width: number;
+  height: number;
+  weight: number;
+  freight_class: string;
+  accessorials: string[];
+  contact_name?: string;
+  contact_email?: string;
+  contact_phone?: string;
+  company_name?: string;
+  request_payload: LTLQuoteRequest;
+  response_payload: LTLQuoteResponse;
+  status: "pending" | "completed" | "error";
+  error_message?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 // Book Shipment Request and Response types
 export interface ShipmentStop {
   stopType: "Pickup" | "Delivery" | "Intermediate";
@@ -202,5 +232,76 @@ export interface BookShipmentResponse {
   estimated_delivery_date?: string;
   total_cost?: number;
   currency?: string;
+  errors?: string[];
+}
+
+// Xano Rate Quote Request and Response types
+export interface XanoRateQuoteLocation {
+  name: string;
+  address1: string;
+  address2?: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  contactName?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+}
+
+export interface XanoRateQuoteItem {
+  description: string;
+  pieces: number;
+  packaging_type: string;
+  weight: number;
+  weight_unit: "lbs" | "kg";
+  length: number;
+  width: number;
+  height: number;
+  dimension_unit: "in" | "cm";
+  freight_class?: string;
+  nmfc_code?: string;
+  hazardous: boolean;
+  hazmat_un_number?: string;
+  hazmat_class?: string;
+  hazmat_packing_group?: string;
+}
+
+export interface XanoRateQuoteRequest {
+  shipmentType: "LTL" | "FTL" | "Parcel" | "Air" | "Ocean";
+  serviceLevel?: "Standard" | "Expedited" | "Guaranteed";
+  pickupDate: string;
+  origin: XanoRateQuoteLocation;
+  destination: XanoRateQuoteLocation;
+  items: XanoRateQuoteItem[];
+  accessorials?: string[];
+  customerReference?: string;
+  specialInstructions?: string;
+}
+
+export interface XanoRateQuoteCarrier {
+  carrier_id: string;
+  carrier_name: string;
+  carrier_scac: string;
+  service_level: string;
+  transit_days: number;
+  total_cost: number;
+  currency: string;
+  expiration_date: string;
+  quote_id: string;
+  estimated_delivery_date?: string;
+  price_breakdown?: {
+    base_rate?: number;
+    fuel_surcharge?: number;
+    accessorials?: Record<string, number>;
+    other_charges?: Record<string, number>;
+  };
+}
+
+export interface XanoRateQuoteResponse {
+  success: boolean;
+  message?: string;
+  request_id: string;
+  quotes: XanoRateQuoteCarrier[];
   errors?: string[];
 }

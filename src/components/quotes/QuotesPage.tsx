@@ -18,6 +18,7 @@ import {
   Filter,
   ArrowUpDown,
   ExternalLink,
+  Truck,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import QuoteForm from "./QuoteForm";
@@ -142,10 +143,12 @@ const QuotesPage = () => {
     <div className="container mx-auto py-6 px-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Quote Management</h1>
-        <Button onClick={() => setShowNewQuoteForm(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          New Quote
-        </Button>
+        <div className="flex space-x-2">
+          <Button onClick={() => navigate("/quotes/road-freight")}>
+            <Plus className="h-4 w-4 mr-2" />
+            New Quote
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -167,6 +170,23 @@ const QuotesPage = () => {
                   <TabsTrigger value="converted">Converted</TabsTrigger>
                 </TabsList>
               </Tabs>
+              <div className="flex space-x-2">
+                <Button
+                  variant="outline"
+                  onClick={() => navigate("/quotes/road-freight")}
+                  className="ml-4"
+                >
+                  <Truck className="h-4 w-4 mr-2" />
+                  Road Freight Quote
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => navigate("/quotes/freight-rate")}
+                >
+                  <Truck className="h-4 w-4 mr-2" />
+                  Freight Rate Quote
+                </Button>
+              </div>
               <div className="flex space-x-2">
                 <div className="relative">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />

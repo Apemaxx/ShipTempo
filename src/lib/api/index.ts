@@ -48,7 +48,7 @@ export const xanoApiClient = {
             window.dispatchEvent(
               new CustomEvent("auth:logout", {
                 detail: { reason: "token_expired" },
-              })
+              }),
             );
             return Promise.reject(error);
           }
@@ -70,14 +70,14 @@ export const xanoApiClient = {
             window.dispatchEvent(
               new CustomEvent("auth:logout", {
                 detail: { reason: "token_refresh_failed" },
-              })
+              }),
             );
             return Promise.reject(error);
           }
         }
 
         return Promise.reject(error);
-      }
+      },
     );
 
     return instance;
@@ -117,7 +117,7 @@ export const xanoApiClient = {
             headers: {
               Authorization: `Bearer ${refreshToken}`,
             },
-          }
+          },
         )
         .then((response) => {
           const { data } = response;
@@ -133,11 +133,11 @@ export const xanoApiClient = {
           storage.setItem("refreshToken", data.refreshToken);
           storage.setItem(
             "tokenExpirationDate",
-            data.tokenExpirationDate.toString()
+            data.tokenExpirationDate.toString(),
           );
           storage.setItem(
             "refreshTokenExpirationDate",
-            data.refreshTokenExpirationDate.toString()
+            data.refreshTokenExpirationDate.toString(),
           );
           storage.setItem("user", JSON.stringify(data.payload));
 
@@ -163,7 +163,7 @@ export const xanoApiClient = {
   // Realiza una solicitud GET a Xano
   async get<T = any>(
     endpoint: string,
-    apiCode: string = AUTH_CODE
+    apiCode: string = AUTH_CODE,
   ): Promise<T> {
     try {
       const api = this.getAxiosInstance(apiCode);
@@ -179,7 +179,7 @@ export const xanoApiClient = {
   async post<T = any>(
     endpoint: string,
     data: any,
-    apiCode: string = AUTH_CODE
+    apiCode: string = AUTH_CODE,
   ): Promise<T> {
     try {
       const api = this.getAxiosInstance(apiCode);
@@ -195,7 +195,7 @@ export const xanoApiClient = {
   async put<T = any>(
     endpoint: string,
     data: any,
-    apiCode: string = AUTH_CODE
+    apiCode: string = AUTH_CODE,
   ): Promise<T> {
     try {
       const api = this.getAxiosInstance(apiCode);
@@ -210,7 +210,7 @@ export const xanoApiClient = {
   // Realiza una solicitud DELETE a Xano
   async delete<T = any>(
     endpoint: string,
-    apiCode: string = AUTH_CODE
+    apiCode: string = AUTH_CODE,
   ): Promise<T> {
     try {
       const api = this.getAxiosInstance(apiCode);
@@ -219,7 +219,7 @@ export const xanoApiClient = {
     } catch (error) {
       console.error(
         `Error en DELETE a ${endpoint} (código: ${apiCode}):`,
-        error
+        error,
       );
       throw error;
     }
@@ -231,3 +231,5 @@ export * from "./billing";
 export * from "./containers";
 export * from "./shipments";
 export * from "./zipcode";
+export * from "./quotes";
+export * from "./customers";

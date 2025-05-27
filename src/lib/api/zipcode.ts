@@ -1,34 +1,35 @@
-import { xanoApiClient } from "./index";
-import { ZIPCODE_API_BASE_URL } from "@/config";
 import { ZipCodeLookupResponse } from "@/types/api";
+import { createClient } from "@supabase/supabase-js";
+
+// Initialize Supabase client
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 /**
- * Lookup ZIP code information from Xano API
+ * Lookup ZIP code information using Supabase Edge Function
  * @param zipCode - The ZIP code to lookup
- * @param countryCode - The country code (default: "1" for USA)
  * @returns Promise with city, state, latitude, and longitude information
  */
 export async function lookupZipCode(
   zipCode: string,
-  countryCode: string = "1"
 ): Promise<ZipCodeLookupResponse | null> {
   try {
-    const response = await xanoApiClient.post(
-      "/lookup/zipcode",
-      {
-        zip_code: zipCode,
-        country_code: countryCode,
-      },
-      ZIPCODE_API_BASE_URL
-    );
+    console.log(`Looking up ZIP code: ${zipCode}`);
 
-    // Check if the response contains data and was successful
-    if (!response || response.success !== true) {
-      console.error("Invalid response from ZIP code lookup API:", response);
-      return null;
+    // Call the Supabase edge function
+    const { data, error } = await supabase.functions.invoke("lookup-zipcode", {
+      method: "POST",
+      body: { zip: zipCode },
+    });
+
+    if (error) {
+      console.error("Supabase function error:", error);
+      throw new Error(`API error: ${error.message}`);
     }
 
-    return response as ZipCodeLookupResponse;
+    console.log("ZIP code lookup response:", data);
+    return data;
   } catch (error) {
     console.error("Error looking up ZIP code:", error);
     return null;
