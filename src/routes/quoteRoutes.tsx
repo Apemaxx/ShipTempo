@@ -1,4 +1,5 @@
 import { lazy } from "react";
+
 import { RouteConfig } from "./types";
 
 const QuotesPage = lazy(() => import("../components/quotes/QuotesPage"));
@@ -12,9 +13,6 @@ const FreightRateQuoteForm = lazy(
 const FreightQuoteResults = lazy(
   () => import("../components/quotes/FreightQuoteResults"),
 );
-const QuoteApiExample = lazy(
-  () => import("../tempobook/storyboards/36380c19-d880-430c-a76a-338e631fff85"),
-);
 
 const quoteRoutes: RouteConfig[] = [
   { path: "/quotes/list", element: <QuotesPage /> },
@@ -25,7 +23,6 @@ const quoteRoutes: RouteConfig[] = [
     path: "/quotes/freight-results/:quoteId",
     element: <FreightQuoteResults />,
   },
-  { path: "/quotes/xano-rate-example", element: <QuoteApiExample /> },
 ];
 
 export default quoteRoutes;

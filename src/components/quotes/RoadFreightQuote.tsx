@@ -1,29 +1,14 @@
-import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import {
-  Search,
-  Filter,
-  FileText,
-  Truck,
-  Calendar,
-  Package,
-  Calculator,
-  AlertCircle,
-  Loader2,
-} from "lucide-react";
-import { LTLQuoteRequest, LTLQuoteCarrierRate } from "@/types/api";
-import { lookupZipCode } from "@/lib/api/zipcode";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getLTLQuotes } from "@/lib/api/quotes";
+import { lookupZipCode } from "@/lib/api/zipcode";
+import { LTLQuoteCarrierRate, LTLQuoteRequest } from "@/types/api";
+import { AlertCircle, Calculator, Calendar, FileText, Filter, Loader2, Package, Search, Truck } from "lucide-react";
+import React, { useEffect, useState } from "react";
+
 // Supabase configuration removed
 import QuoteResults from "./QuoteResults";
 
@@ -368,6 +353,7 @@ const RoadFreightQuote = () => {
                 setQuoteError(
                   "No quotes available from backup method. Please check your shipment information and try again.",
                 );
+                
               }
             }
           } catch (edgeFunctionError: any) {
@@ -387,6 +373,9 @@ const RoadFreightQuote = () => {
       setIsLoadingQuotes(false);
     }
   };
+
+  
+
 
   return (
     <div className="container mx-auto py-6">

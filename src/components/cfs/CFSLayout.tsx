@@ -1,12 +1,6 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import React from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
 
 const CFSLayout = () => {
   const location = useLocation();
@@ -52,7 +46,7 @@ const CFSLayout = () => {
   };
 
   return (
-    <div className="container mx-auto p-6 bg-background">
+    <div className="container-fluid mx-auto p-6 bg-background">
       <Card className="w-full">
         <CardHeader>
           <CardTitle>{getPageTitle()}</CardTitle>

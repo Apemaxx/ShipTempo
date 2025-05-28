@@ -35,8 +35,8 @@ const SignIn = () => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: "admin@a2rg.com",
+      password: "admin@a2rg.com",
       rememberMe: true,
     },
   });
