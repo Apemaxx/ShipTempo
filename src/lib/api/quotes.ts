@@ -1,14 +1,10 @@
-import { createClient } from "@supabase/supabase-js";
 import {
   LTLQuoteRequest,
   LTLQuoteCarrierRate,
   LTLQuoteResponse,
 } from "@/types/api";
 
-// Initialize Supabase client
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Supabase client initialization removed
 
 /**
  * Get LTL shipping rate quotes from Supabase Edge Function
@@ -23,15 +19,11 @@ export async function getLTLQuotes(
   try {
     console.log("Fetching LTL quotes with payload:", payload);
 
-    // Call the Supabase Edge Function
-    const { data, error } = await supabase.functions.invoke("get-ltl-quotes", {
-      body: JSON.stringify(payload),
-    });
+    // Supabase Edge Function call removed
+    console.log("Direct API call would be implemented here");
 
-    if (error) {
-      console.error("Error invoking edge function:", error);
-      throw new Error(`API error: ${error.message || "Failed to get quotes"}`);
-    }
+    // Placeholder response
+    const data = { quotes: [] };
 
     if (!data || !data.quotes || !Array.isArray(data.quotes)) {
       console.error("Invalid response format:", data);
@@ -62,23 +54,11 @@ export async function saveQuote(
   userId: string,
 ): Promise<string> {
   try {
-    const { data, error } = await supabase
-      .from("ltl_quotes")
-      .insert({
-        user_id: userId,
-        origin_zip: quoteData.request_id, // This should be updated with actual origin zip
-        destination_zip: quoteData.request_id, // This should be updated with actual destination zip
-        response_payload: quoteData,
-        status: "completed",
-      })
-      .select("id");
+    // Supabase database operation removed
+    console.log("Quote saving functionality removed");
 
-    if (error) {
-      console.error("Error saving quote:", error);
-      throw new Error(`Database error: ${error.message}`);
-    }
-
-    return data?.[0]?.id || "";
+    // Return a placeholder ID
+    return "quote-" + Date.now();
   } catch (error) {
     console.error("Error saving quote:", error);
     throw error;
@@ -96,19 +76,11 @@ export async function getUserQuotes(
   limit: number = 10,
 ): Promise<any[]> {
   try {
-    const { data, error } = await supabase
-      .from("ltl_quotes")
-      .select("*")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(limit);
+    // Supabase database query removed
+    console.log("Quote fetching functionality removed");
 
-    if (error) {
-      console.error("Error fetching user quotes:", error);
-      throw new Error(`Database error: ${error.message}`);
-    }
-
-    return data || [];
+    // Return an empty array as placeholder
+    return [];
   } catch (error) {
     console.error("Error fetching user quotes:", error);
     throw error;

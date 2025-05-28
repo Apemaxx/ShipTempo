@@ -1,58 +1,34 @@
-import { supabase } from "./api";
+// Supabase edge functions have been removed
+
+// This file is kept as a placeholder to prevent import errors
+// Replace with direct API calls or another serverless solution
 
 /**
- * Call the ZIP code lookup edge function
+ * Placeholder for ZIP code lookup functionality
  */
 export async function lookupZipCodeEdge(
   zipCode: string,
   countryCode: string = "1",
 ) {
-  try {
-    const { data, error } = await supabase.functions.invoke("lookup-zipcode", {
-      body: { zip_code: zipCode, country_code: countryCode },
-    });
-
-    if (error) throw error;
-    return data;
-  } catch (error) {
-    console.error("Error calling ZIP code lookup edge function:", error);
-    throw error;
-  }
+  console.log("Supabase edge function removed: lookupZipCodeEdge");
+  return { success: false, message: "Function removed" };
 }
 
 /**
- * Call the LTL quotes edge function
+ * Placeholder for LTL quotes functionality
  */
 export async function getLTLQuotesEdge(payload: any) {
-  try {
-    const { data, error } = await supabase.functions.invoke("get-ltl-quotes", {
-      body: payload,
-    });
-
-    if (error) throw error;
-    return data;
-  } catch (error) {
-    console.error("Error calling LTL quotes edge function:", error);
-    throw error;
-  }
+  console.log("Supabase edge function removed: getLTLQuotesEdge");
+  return { success: false, message: "Function removed" };
 }
 
 /**
- * Call the create shipment edge function
+ * Placeholder for create shipment functionality
  */
 export async function createShipmentFromQuoteEdge(
   quoteId: string,
   carrierId: string,
 ) {
-  try {
-    const { data, error } = await supabase.functions.invoke("create-shipment", {
-      body: { quote_id: quoteId, carrier_id: carrierId },
-    });
-
-    if (error) throw error;
-    return data;
-  } catch (error) {
-    console.error("Error calling create shipment edge function:", error);
-    throw error;
-  }
+  console.log("Supabase edge function removed: createShipmentFromQuoteEdge");
+  return { success: false, message: "Function removed" };
 }

@@ -1,7 +1,6 @@
-import { createClient } from "@supabase/supabase-js";
-import type { Database } from "@/types/supabase";
+// Supabase client has been removed
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// This file is kept as a placeholder to prevent import errors
+// Replace with your preferred database/API client
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+export const supabase = null;

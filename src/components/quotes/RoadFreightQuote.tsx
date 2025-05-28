@@ -24,11 +24,7 @@ import {
 import { LTLQuoteRequest, LTLQuoteCarrierRate } from "@/types/api";
 import { lookupZipCode } from "@/lib/api/zipcode";
 import { getLTLQuotes } from "@/lib/api/quotes";
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Supabase configuration removed
 import QuoteResults from "./QuoteResults";
 
 interface LtlDimensions {
@@ -320,22 +316,9 @@ const RoadFreightQuote = () => {
           setQuoteError("Direct API call failed. Trying backup method...");
 
           try {
-            const { data, error } = await supabase.functions.invoke(
-              "supabase-functions-get-xano-quotes",
-              {
-                body: JSON.stringify(directXanoPayload),
-                options: {
-                  timeout: 120000, // 120 seconds (2 minutes) to allow for longer processing time
-                },
-              },
-            );
-
-            if (error) {
-              console.error("Error invoking edge function:", error);
-              throw new Error(
-                `Edge function error: ${error.message || "Failed to get quotes"}`,
-              );
-            }
+            // Supabase edge function call removed
+            const data = { quotes: [] }; // Placeholder for removed functionality
+            console.log("Edge function fallback removed");
 
             console.log(
               "Edge function LTL quote response:",

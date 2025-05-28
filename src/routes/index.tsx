@@ -19,6 +19,7 @@ import reportsRoutes from "./reportsRoutes";
 import shipmentRoutes from "./shipmentRoutes";
 import quoteRoutes from "./quoteRoutes";
 import tempoRoutes from "../lib/tempo-routes";
+// Supabase imports removed
 
 /**
  * Protected route component - ensures user is authenticated
@@ -42,10 +43,10 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 // Helper function for handling child routes
 const renderChildRoutes = (route: RouteConfig) => {
   if (!route.children) return null;
-  
+
   return route.children.map((childRoute) => (
     <Route
-      key={childRoute.path || 'index'}
+      key={childRoute.path || "index"}
       index={!childRoute.path}
       path={childRoute.path}
       element={childRoute.element}
@@ -58,8 +59,10 @@ const renderChildRoutes = (route: RouteConfig) => {
  */
 export const AppRoutes = () => {
   // Integrations component with proper lazy loading
-  const IntegrationsComponent = lazy(() => import("../components/cfs/Integrations"));
-  
+  const IntegrationsComponent = lazy(
+    () => import("../components/cfs/Integrations"),
+  );
+
   return (
     <Suspense fallback={<LoadingScreen />}>
       <Routes>
