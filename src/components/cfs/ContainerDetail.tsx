@@ -1,17 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { XanoContainerResponse } from "@/types/api";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { XanoContainerResponse } from "@/types/api";
 
 interface RouteParams extends Record<string, string> {
   containerNumber: string;
@@ -469,34 +462,6 @@ const ContainerDetail: React.FC = () => {
               </tbody>
             </table>
           </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex flex-wrap gap-2 pt-4">
-          <Button variant="secondary" disabled className="px-4 py-2">
-            Warehouse Collect
-          </Button>
-          <Button variant="default" className="px-4 py-2">
-            View Notes
-          </Button>
-          <Button variant="secondary" disabled className="px-4 py-2">
-            View Outturn Report
-          </Button>
-          <Button variant="default" className="px-4 py-2">
-            Create Alert
-          </Button>
-          <Button variant="default" className="px-4 py-2">
-            Attachments
-          </Button>
-          <Button variant="default" className="px-4 py-2">
-            Copy Link
-          </Button>
-          <Button variant="default" className="px-4 py-2">
-            Email Link
-          </Button>
-          <Button variant="default" className="px-4 py-2">
-            Docuware
-          </Button>
         </div>
 
         {/* CFS Lot Details Table */}
