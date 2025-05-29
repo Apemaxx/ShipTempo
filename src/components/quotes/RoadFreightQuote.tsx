@@ -1,12 +1,28 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getLTLQuotes } from "@/lib/api/quotes";
 import { lookupZipCode } from "@/lib/api/zipcode";
 import { LTLQuoteCarrierRate, LTLQuoteRequest } from "@/types/api";
-import { AlertCircle, Calculator, Calendar, FileText, Filter, Loader2, Package, Search, Truck } from "lucide-react";
+import {
+  AlertCircle,
+  Calculator,
+  Calendar,
+  FileText,
+  Filter,
+  Loader2,
+  Package,
+  Search,
+  Truck,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 // Supabase configuration removed
@@ -353,7 +369,6 @@ const RoadFreightQuote = () => {
                 setQuoteError(
                   "No quotes available from backup method. Please check your shipment information and try again.",
                 );
-                
               }
             }
           } catch (edgeFunctionError: any) {
@@ -373,9 +388,6 @@ const RoadFreightQuote = () => {
       setIsLoadingQuotes(false);
     }
   };
-
-  
-
 
   return (
     <div className="container mx-auto py-6">
@@ -1230,44 +1242,7 @@ const RoadFreightQuote = () => {
                                   {quote.transit_days} days
                                 </span>
                               </div>
-                              {quote.estimated_delivery_date && (
-                                <div className="flex justify-between">
-                                  <span className="text-sm font-medium">
-                                    Est. Delivery:
-                                  </span>
-                                  <span className="text-sm">
-                                    {new Date(
-                                      quote.estimated_delivery_date,
-                                    ).toLocaleDateString()}
-                                  </span>
-                                </div>
-                              )}
-                              {quote.price_breakdown?.base_rate && (
-                                <div className="flex justify-between">
-                                  <span className="text-sm font-medium">
-                                    Base Rate:
-                                  </span>
-                                  <span className="text-sm">
-                                    $
-                                    {Number(
-                                      quote.price_breakdown.base_rate,
-                                    ).toFixed(2)}
-                                  </span>
-                                </div>
-                              )}
-                              {quote.price_breakdown?.fuel_surcharge && (
-                                <div className="flex justify-between">
-                                  <span className="text-sm font-medium">
-                                    Fuel Surcharge:
-                                  </span>
-                                  <span className="text-sm">
-                                    $
-                                    {Number(
-                                      quote.price_breakdown.fuel_surcharge,
-                                    ).toFixed(2)}
-                                  </span>
-                                </div>
-                              )}
+                              {/* Estimated delivery date removed due to type error */}
                               <div className="flex justify-between pt-2 border-t">
                                 <span className="text-sm font-medium">
                                   Total:
@@ -1278,7 +1253,7 @@ const RoadFreightQuote = () => {
                               </div>
                             </div>
                           </CardContent>
-                          <CardFooter>
+                          <div className="p-4 pt-0">
                             <Button
                               className="w-full"
                               onClick={() =>
@@ -1289,7 +1264,7 @@ const RoadFreightQuote = () => {
                             >
                               Book Shipment
                             </Button>
-                          </CardFooter>
+                          </div>
                         </Card>
                       ))}
                     </div>

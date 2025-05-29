@@ -1,5 +1,5 @@
 import axios from "axios";
-import { supabase } from ".";
+// Removed supabase import as it's not needed
 import { ArrivalNoticeData } from "@/components/ocean/ArrivalNotice";
 
 // Interface for STGUSA API response
@@ -25,7 +25,7 @@ export interface ArrivalNoticeSearchParams {
  * @returns Promise with arrival notice data
  */
 export async function fetchArrivalNotices(
-  params: ArrivalNoticeSearchParams
+  params: ArrivalNoticeSearchParams,
 ): Promise<ArrivalNoticeData[]> {
   try {
     // In a real implementation, this would be an actual API call to STGUSA
@@ -131,7 +131,7 @@ export async function fetchArrivalNotices(
 
     if (params.containerNumber) {
       filteredData = filteredData.filter((notice) =>
-        notice.container.containerNo.includes(params.containerNumber!)
+        notice.container.containerNo.includes(params.containerNumber!),
       );
     }
 
@@ -139,13 +139,13 @@ export async function fetchArrivalNotices(
       filteredData = filteredData.filter(
         (notice) =>
           notice.masterBLNo.includes(params.billOfLading!) ||
-          notice.houseBLNo.includes(params.billOfLading!)
+          notice.houseBLNo.includes(params.billOfLading!),
       );
     }
 
     if (params.bookingNumber) {
       filteredData = filteredData.filter((notice) =>
-        notice.referenceNo.includes(params.bookingNumber!)
+        notice.referenceNo.includes(params.bookingNumber!),
       );
     }
 
@@ -153,7 +153,7 @@ export async function fetchArrivalNotices(
       filteredData = filteredData.filter(
         (notice) =>
           notice.referenceNo.includes(params.referenceNumber!) ||
-          notice.customerRefNo.includes(params.referenceNumber!)
+          notice.customerRefNo.includes(params.referenceNumber!),
       );
     }
 
@@ -170,7 +170,7 @@ export async function fetchArrivalNotices(
  * @returns Promise with arrival notice data
  */
 export async function fetchArrivalNoticeByReference(
-  referenceNo: string
+  referenceNo: string,
 ): Promise<ArrivalNoticeData | null> {
   try {
     const notices = await fetchArrivalNotices({ referenceNumber: referenceNo });
@@ -178,7 +178,7 @@ export async function fetchArrivalNoticeByReference(
   } catch (error) {
     console.error(
       `Error fetching arrival notice with reference ${referenceNo}:`,
-      error
+      error,
     );
     throw error;
   }
@@ -190,7 +190,7 @@ export async function fetchArrivalNoticeByReference(
  * @returns Promise with success status
  */
 export async function saveArrivalNotice(
-  arrivalNotice: ArrivalNoticeData
+  arrivalNotice: ArrivalNoticeData,
 ): Promise<boolean> {
   try {
     // In a real implementation, this would save to Supabase

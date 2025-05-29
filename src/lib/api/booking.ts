@@ -1,8 +1,9 @@
-import { createClient } from "@/lib/utils";
+import { createClient } from "@supabase/supabase-js";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/config";
 import { OceanExportBooking } from "@/types/booking";
 
 // Create a Supabase client
-const getSupabaseClient = () => createClient();
+const getSupabaseClient = () => createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Function to fetch all ocean export bookings
 export const fetchOceanExportBookings = async (): Promise<

@@ -229,7 +229,25 @@ export const xanoApiClient = {
 // Exportar todas las APIs específicas
 export * from "./billing";
 export * from "./containers";
-export * from "./shipments";
+// Export from shipments but exclude getLTLQuotes to avoid naming conflicts
 export * from "./zipcode";
-export * from "./quotes";
+
+// Re-export specific functions from quotes and shipments to avoid naming conflicts
+import { getLTLQuotes as getLTLQuotesFromQuotes } from "./quotes";
+import { getLTLQuotes as getLTLQuotesFromShipments } from "./shipments";
+
+// Export the renamed functions
+export { getLTLQuotesFromQuotes, getLTLQuotesFromShipments };
+
+// Export everything else from shipments except getLTLQuotes
+import * as ShipmentsModule from "./shipments";
+export const {
+  getCarrierEndpoints,
+  searchShipments,
+  fetchProNumber,
+  validateProNumber,
+  storeProNumber,
+  // getLTLQuotes is excluded to avoid naming conflicts
+} = ShipmentsModule;
+
 export * from "./customers";
