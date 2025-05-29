@@ -1,10 +1,11 @@
 import { lazy } from "react";
+
 import { RouteConfig } from "./types";
 
 const CFSLayout = lazy(() => import("../components/cfs/CFSLayout"));
 const Containers = lazy(() => import("../components/cfs/Containers"));
-const CFSCargoDetails = lazy(() => import("../components/cfs/ContainerDetail"));
-const ContainerDetail = lazy(() => import("../components/cfs/CFSCargoDetails"));
+const CFSCargoDetails = lazy(() => import("../components/cfs/CFSCargoDetails"));
+const ContainerDetail = lazy(() => import("../components/cfs/ContainerDetail"));
 const OuturnReports = lazy(() => import("../components/cfs/OuturnReports"));
 const CFSFees = lazy(() => import("../components/cfs/CFSFees"));
 const Registration = lazy(() => import("../components/cfs/Registration"));
