@@ -1,8 +1,27 @@
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import useContainers, { Container } from "@/hooks/useContainers";
-import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import {
+  ChevronFirst,
+  ChevronLast,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+} from "lucide-react";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -17,7 +36,7 @@ const Containers = ({ payload }: ContainersProps = {}) => {
     error,
     pagination,
     setPageSize,
-    setCurrentPage
+    setCurrentPage,
   } = useContainers({ initialData: payload });
 
   return (
@@ -40,9 +59,16 @@ const Containers = ({ payload }: ContainersProps = {}) => {
           <div className="flex justify-between items-center mb-4">
             <div className="text-sm text-muted-foreground">
               Showing{" "}
-              {Math.min((pagination.currentPage - 1) * pagination.pageSize + 1, pagination.totalItems)} to{" "}
-              {Math.min(pagination.currentPage * pagination.pageSize, pagination.totalItems)} of{" "}
-              {pagination.totalItems} containers
+              {Math.min(
+                (pagination.currentPage - 1) * pagination.pageSize + 1,
+                pagination.totalItems,
+              )}{" "}
+              to{" "}
+              {Math.min(
+                pagination.currentPage * pagination.pageSize,
+                pagination.totalItems,
+              )}{" "}
+              of {pagination.totalItems} containers
             </div>
             <div className="flex items-center space-x-2">
               <span className="text-sm text-muted-foreground mr-2">
@@ -88,7 +114,7 @@ const Containers = ({ payload }: ContainersProps = {}) => {
                   <TableCell>{container.location}</TableCell>
                   <TableCell>
                     <Link
-                      to={`/container-details/${container.number}`}
+                      to={`/containers/detail/${container.number}`}
                       className="text-primary hover:underline font-medium"
                     >
                       {container.number}
@@ -126,7 +152,9 @@ const Containers = ({ payload }: ContainersProps = {}) => {
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => setCurrentPage(Math.max(pagination.currentPage - 1, 1))}
+                onClick={() =>
+                  setCurrentPage(Math.max(pagination.currentPage - 1, 1))
+                }
                 disabled={pagination.currentPage === 1}
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -135,10 +163,7 @@ const Containers = ({ payload }: ContainersProps = {}) => {
               <div className="flex items-center">
                 {Array.from(
                   {
-                    length: Math.min(
-                      5,
-                      pagination.totalPages
-                    ),
+                    length: Math.min(5, pagination.totalPages),
                   },
                   (_, i) => {
                     // Calculate page numbers to show (centered around current page)
@@ -152,7 +177,9 @@ const Containers = ({ payload }: ContainersProps = {}) => {
                         <Button
                           key={pageNum}
                           variant={
-                            pagination.currentPage === pageNum ? "default" : "outline"
+                            pagination.currentPage === pageNum
+                              ? "default"
+                              : "outline"
                           }
                           size="icon"
                           onClick={() => setCurrentPage(pageNum)}
@@ -170,7 +197,11 @@ const Containers = ({ payload }: ContainersProps = {}) => {
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => setCurrentPage(Math.min(pagination.currentPage + 1, pagination.totalPages))}
+                onClick={() =>
+                  setCurrentPage(
+                    Math.min(pagination.currentPage + 1, pagination.totalPages),
+                  )
+                }
                 disabled={pagination.currentPage >= pagination.totalPages}
               >
                 <ChevronRight className="h-4 w-4" />
