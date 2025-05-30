@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { CFSCargoDetails, fetchCFSCargoDetails } from "@/lib/api";
 import { ArrowLeft, Download, ExternalLink, Eye, FileText, Loader2 } from "lucide-react";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
@@ -18,6 +19,22 @@ const CFSCargoDetailsPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [showGatePass, setShowGatePass] = useState<boolean>(false);
+
+  // Helper functions para formatear fechas
+  const formatCustomsReleaseDate = (customsRelease: string) => {
+    if (!customsRelease) return customsRelease;
+    const parts = customsRelease.split(' ');
+    if (parts.length >= 2) {
+      const dateStr = parts[1]; // Toma la segunda parte (la fecha)
+      return moment(dateStr, 'MM/DD/YY').format('DD/MM/YYYY');
+    }
+    return customsRelease;
+  };
+
+  const formatFreightReleaseDate = (dateString: string) => {
+    if (!dateString) return '';
+    return moment(dateString).format('DD/MM/YYYY');
+  };
 
   useEffect(() => {
     const loadCargoDetails = async () => {
@@ -218,7 +235,14 @@ const CFSCargoDetailsPage: React.FC = () => {
                   </td>
                   <td className="p-3 border-r border-gray-300">
                     <span className="text-green-600">
-                      {cargoDetails.pickUpRequirements.customsRelease}
+                      {cargoDetails.pickUpRequirements.customsRelease && 
+                       cargoDetails.pickUpRequirements.customsRelease.split(' ').length >= 2 ? (
+                        <>
+                          {formatCustomsReleaseDate(cargoDetails.pickUpRequirements.customsRelease)}
+                        </>
+                      ) : (
+                        cargoDetails.pickUpRequirements.customsRelease
+                      )}
                     </span>
                   </td>
                   <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
@@ -226,7 +250,11 @@ const CFSCargoDetailsPage: React.FC = () => {
                   </td>
                   <td className="p-3">
                     <span className="text-green-600">
-                      {cargoDetails.pickUpRequirements.freightRelease}
+                      {cargoDetails.pickUpRequirements.freighReleaseDate && (
+                        <div className="text-gray-600">
+                          {formatFreightReleaseDate(cargoDetails.pickUpRequirements.freighReleaseDate)}
+                        </div>
+                      )}
                     </span>
                   </td>
                 </tr>
@@ -378,7 +406,7 @@ const CFSCargoDetailsPage: React.FC = () => {
                         {milestone.code}
                       </td>
                       <td className="p-3 border-r border-gray-300">
-                        {milestone.description === null ? milestone.description : "-"}
+                        {milestone.description || "N/A"}
                       </td>
                       <td className="p-3 border-r border-gray-300">
                         {milestone.statusDateTime}
