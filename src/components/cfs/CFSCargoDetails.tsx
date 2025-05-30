@@ -14,7 +14,7 @@ interface RouteParams extends Record<string, string> {
 const CFSCargoDetailsPage: React.FC = () => {
   const { jobLotNumber } = useParams<RouteParams>();
   const [cargoDetails, setCargoDetails] = useState<CFSCargoDetails | null>(
-    null,
+    null
   );
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,17 +23,17 @@ const CFSCargoDetailsPage: React.FC = () => {
   // Helper functions para formatear fechas
   const formatCustomsReleaseDate = (customsRelease: string) => {
     if (!customsRelease) return customsRelease;
-    const parts = customsRelease.split(' ');
+    const parts = customsRelease.split(" ");
     if (parts.length >= 2) {
       const dateStr = parts[1]; // Toma la segunda parte (la fecha)
-      return moment(dateStr, 'MM/DD/YY').format('DD/MM/YYYY');
+      return moment(dateStr, "MM/DD/YY").format("DD/MM/YYYY");
     }
     return customsRelease;
   };
 
   const formatFreightReleaseDate = (dateString: string) => {
-    if (!dateString) return '';
-    return moment(dateString).format('DD/MM/YYYY');
+    if (!dateString) return "";
+    return moment(dateString).format("DD/MM/YYYY");
   };
 
   useEffect(() => {
@@ -173,8 +173,7 @@ const CFSCargoDetailsPage: React.FC = () => {
                 </td>
                 <td className="p-3 border-r border-gray-300">
                   {cargoDetails.piecesManifested} /{" "}
-                  {cargoDetails.piecesReceived} /{" "}
-                  {cargoDetails.palletsReceived}
+                  {cargoDetails.piecesReceived} / {cargoDetails.palletsReceived}
                 </td>
                 <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
                   Weight
@@ -235,10 +234,13 @@ const CFSCargoDetailsPage: React.FC = () => {
                   </td>
                   <td className="p-3 border-r border-gray-300">
                     <span className="text-green-600">
-                      {cargoDetails.pickUpRequirements.customsRelease && 
-                       cargoDetails.pickUpRequirements.customsRelease.split(' ').length >= 2 ? (
+                      {cargoDetails.pickUpRequirements.customsRelease &&
+                      cargoDetails.pickUpRequirements.customsRelease.split(" ")
+                        .length >= 2 ? (
                         <>
-                          {formatCustomsReleaseDate(cargoDetails.pickUpRequirements.customsRelease)}
+                          {formatCustomsReleaseDate(
+                            cargoDetails.pickUpRequirements.customsRelease
+                          )}
                         </>
                       ) : (
                         cargoDetails.pickUpRequirements.customsRelease
@@ -249,13 +251,9 @@ const CFSCargoDetailsPage: React.FC = () => {
                     Freight Release
                   </td>
                   <td className="p-3">
-                    <span className="text-green-600">
-                      {cargoDetails.pickUpRequirements.freighReleaseDate && (
-                        <div className="text-gray-600">
-                          {formatFreightReleaseDate(cargoDetails.pickUpRequirements.freighReleaseDate)}
-                        </div>
-                      )}
-                    </span>
+                    {formatFreightReleaseDate(
+                      cargoDetails.pickUpRequirements.freighReleaseDate
+                    )}
                   </td>
                 </tr>
                 <tr className="border-b border-gray-300">
@@ -406,7 +404,9 @@ const CFSCargoDetailsPage: React.FC = () => {
                         {milestone.code}
                       </td>
                       <td className="p-3 border-r border-gray-300">
-                        {milestone.description === null ? '-' : milestone.description}
+                        {milestone.description === null
+                          ? "-"
+                          : milestone.description}
                       </td>
                       <td className="p-3 border-r border-gray-300">
                         {milestone.statusDateTime}
