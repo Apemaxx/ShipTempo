@@ -404,9 +404,9 @@ const CFSCargoDetailsPage: React.FC = () => {
                         {milestone.code}
                       </td>
                       <td className="p-3 border-r border-gray-300">
-                        {milestone.description === null
-                          ? "-"
-                          : milestone.description}
+                        {milestone.description !== "null"
+                          ? milestone.description
+                          : "-"}
                       </td>
                       <td className="p-3 border-r border-gray-300">
                         {milestone.statusDateTime}
