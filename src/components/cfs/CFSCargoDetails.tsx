@@ -202,7 +202,7 @@ const CFSCargoDetailsPage: React.FC = () => {
                   </td>
                   <td className="p-3 border-r border-gray-300 w-1/4">
                     <span className="text-green-600 font-medium">
-                      {cargoDetails.pickUpRequirements.status}
+                      {cargoDetails.pickUpRequirements.shippingStatus}
                     </span>
                   </td>
                   <td className="p-3 bg-gray-50 font-medium border-r border-gray-300 w-1/4">
@@ -378,7 +378,7 @@ const CFSCargoDetailsPage: React.FC = () => {
                         {milestone.code}
                       </td>
                       <td className="p-3 border-r border-gray-300">
-                        {milestone.description || "N/A"}
+                        {milestone.description === null ? milestone.description : "-"}
                       </td>
                       <td className="p-3 border-r border-gray-300">
                         {milestone.statusDateTime}
