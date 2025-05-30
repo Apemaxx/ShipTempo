@@ -376,7 +376,7 @@ const ContainerDetail: React.FC = () => {
                       </TableCell>
                       <TableCell>
                         <Link
-                          to={`/cfs-availability/containers/job/${lot.jobNumber}`}
+                          to={`/cfs-availability/containers/job/${lot.jobNumber}-${lot.lotNumber}`}
                           className="text-primary hover:underline"
                         >
                           {lot.houseBillNumber}
