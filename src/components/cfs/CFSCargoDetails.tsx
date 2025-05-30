@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CFSCargoDetails, fetchCFSCargoDetails } from "@/lib/api";
-import { ArrowLeft, ExternalLink, FileText, Loader2 } from "lucide-react";
+import { ArrowLeft, Download, ExternalLink, Eye, FileText, Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
@@ -18,6 +17,7 @@ const CFSCargoDetailsPage: React.FC = () => {
   );
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [showGatePass, setShowGatePass] = useState<boolean>(false);
 
   useEffect(() => {
     const loadCargoDetails = async () => {
@@ -98,7 +98,7 @@ const CFSCargoDetailsPage: React.FC = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 bg-white">
       <div className="flex justify-between items-center">
         <Link
           to="/cfs-availability/containers"
@@ -108,289 +108,366 @@ const CFSCargoDetailsPage: React.FC = () => {
         </Link>
       </div>
 
-      <Tabs defaultValue="cargo-details" className="w-full">
-        <TabsList className="mb-4">
-          <TabsTrigger value="cargo-details">CFS Cargo Details</TabsTrigger>
-          <TabsTrigger value="pickup-requirements">
-            Pick Up Requirements
-          </TabsTrigger>
-          <TabsTrigger value="shipping-info">Shipping Information</TabsTrigger>
-        </TabsList>
+      {/* CFS Cargo Details Section */}
+      <div>
+        <h2 className="text-xl font-bold mb-4">CFS Cargo Details</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse border border-gray-300">
+            <tbody>
+              <tr className="border-b border-gray-300">
+                <td className="p-3 bg-gray-50 font-medium border-r border-gray-300 w-1/4">
+                  Location
+                </td>
+                <td className="p-3 border-r border-gray-300 w-1/4">
+                  {cargoDetails.cfsStation}
+                </td>
+                <td className="p-3 bg-gray-50 font-medium border-r border-gray-300 w-1/4">
+                  Container Number
+                </td>
+                <td className="p-3 w-1/4">{cargoDetails.container}</td>
+              </tr>
+              <tr className="border-b border-gray-300">
+                <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                  Master Bill Number
+                </td>
+                <td className="p-3 border-r border-gray-300">
+                  {cargoDetails.masterBillNumber}
+                </td>
+                <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                  AMS HBL Number
+                </td>
+                <td className="p-3">{cargoDetails.amsBillNumber}</td>
+              </tr>
+              <tr className="border-b border-gray-300">
+                <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                  House Bill Number
+                </td>
+                <td className="p-3 border-r border-gray-300">
+                  {cargoDetails.houseBillNumber}
+                </td>
+                <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                  Customer Reference
+                </td>
+                <td className="p-3">{cargoDetails.customerReference}</td>
+              </tr>
+              <tr className="border-b border-gray-300">
+                <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                  Pieces (Man/Rec/Plt)
+                </td>
+                <td className="p-3 border-r border-gray-300">
+                  {cargoDetails.piecesManifested} /{" "}
+                  {cargoDetails.piecesReceived} /{" "}
+                  {cargoDetails.palletsReceived}
+                </td>
+                <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                  Weight
+                </td>
+                <td className="p-3">{cargoDetails.weightInLBS} Lbs</td>
+              </tr>
+              <tr className="border-b border-gray-300">
+                <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                  Volume
+                </td>
+                <td className="p-3 border-r border-gray-300">
+                  {cargoDetails.volumeInCBM} CBM
+                </td>
+                <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                  Free Time Expires
+                </td>
+                <td className="p-3">{cargoDetails.freeTimeExpiresDate}</td>
+              </tr>
+              <tr>
+                <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                  Cargo Description
+                </td>
+                <td className="p-3" colSpan={3}>
+                  {cargoDetails.cargoDescription}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-        <TabsContent value="cargo-details">
-          <Card>
-            <CardHeader>
-              <CardTitle>CFS Cargo Details</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Location</div>
-                    <div>{cargoDetails.cfsStation}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Container Number</div>
-                    <div>{cargoDetails.container}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Master Bill of Lading</div>
-                    <div>{cargoDetails.masterBillNumber}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">AMS HBL Number</div>
-                    <div>{cargoDetails.amsBillNumber}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">House Bill of Lading</div>
-                    <div>{cargoDetails.houseBillNumber}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Customer Reference</div>
-                    <div>{cargoDetails.customerReference}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Tracking Number</div>
-                    <div>{cargoDetails.trackingNumber}</div>
-                  </div>
+      {/* Pick Up Requirements Section */}
+      <div>
+        <h2 className="text-xl font-bold mb-4">Pick Up Requirements</h2>
+        <div className="space-y-4">
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse border border-gray-300">
+              <tbody>
+                <tr className="border-b border-gray-300">
+                  <td className="p-3 bg-gray-50 font-medium border-r border-gray-300 w-1/4">
+                    Status
+                  </td>
+                  <td className="p-3 border-r border-gray-300 w-1/4">
+                    <span className="text-green-600 font-medium">
+                      {cargoDetails.pickUpRequirements.status}
+                    </span>
+                  </td>
+                  <td className="p-3 bg-gray-50 font-medium border-r border-gray-300 w-1/4">
+                    Pick Up Number
+                  </td>
+                  <td className="p-3 w-1/4">
+                    {cargoDetails.pickUpRequirements.pickUpNumber}
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                    Customs Release
+                  </td>
+                  <td className="p-3 border-r border-gray-300">
+                    <span className="text-green-600">
+                      {cargoDetails.pickUpRequirements.customsRelease}
+                    </span>
+                  </td>
+                  <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                    Freight Release
+                  </td>
+                  <td className="p-3">
+                    <span className="text-green-600">
+                      {cargoDetails.pickUpRequirements.freightRelease}
+                    </span>
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                    Delivery Order
+                  </td>
+                  <td className="p-3 border-r border-gray-300">
+                    {cargoDetails.pickUpRequirements.deliveryOrder}
+                  </td>
+                  <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                    Cargo On Hold
+                  </td>
+                  <td className="p-3">
+                    {cargoDetails.pickUpRequirements.cargoOnHold}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                    Marks Hold
+                  </td>
+                  <td className="p-3 border-r border-gray-300">
+                    {cargoDetails.pickUpRequirements.marksHold}
+                  </td>
+                  <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                    Exchange Pallets
+                  </td>
+                  <td className="p-3">
+                    {cargoDetails.pickUpRequirements.exchangePallet}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* Shipping Information Section */}
+      <div>
+        <h2 className="text-xl font-bold mb-4">Shipping Information</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left Table */}
+          <div>
+            <h3 className="font-medium mb-3">Vessel & Arrival Information</h3>
+            <table className="w-full border-collapse border border-gray-300">
+              <tbody>
+                <tr className="border-b border-gray-300">
+                  <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                    ATA
+                  </td>
+                  <td className="p-3">
+                    {cargoDetails.shippingInformation.ata}
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                    ETA
+                  </td>
+                  <td className="p-3">
+                    {cargoDetails.shippingInformation.eta}
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                    Pick Up Agent
+                  </td>
+                  <td className="p-3">
+                    {cargoDetails.shippingInformation.pickUpAgent}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                    Destination
+                  </td>
+                  <td className="p-3">
+                    {cargoDetails.shippingInformation.destination}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Right Table */}
+          <div>
+            <h3 className="font-medium mb-3">Transportation Details</h3>
+            <table className="w-full border-collapse border border-gray-300">
+              <tbody>
+                <tr className="border-b border-gray-300">
+                  <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                    Pro Number
+                  </td>
+                  <td className="p-3">
+                    {cargoDetails.shippingInformation.proNumber}
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                    Ship Date
+                  </td>
+                  <td className="p-3">
+                    {cargoDetails.shippingInformation.shipDate}
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                    Load Number
+                  </td>
+                  <td className="p-3">
+                    {cargoDetails.shippingInformation.loadNumber}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-3 bg-gray-50 font-medium border-r border-gray-300">
+                    Trailer Number
+                  </td>
+                  <td className="p-3">
+                    {cargoDetails.shippingInformation.trailerNumber}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Milestones Table */}
+        {cargoDetails.milestones && cargoDetails.milestones.length > 0 && (
+          <div className="mt-8">
+            <h3 className="font-medium text-lg mb-4">Tracking Milestones</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse border border-gray-300">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="text-left p-3 border-r border-gray-300 font-medium">
+                      Code
+                    </th>
+                    <th className="text-left p-3 border-r border-gray-300 font-medium">
+                      Description
+                    </th>
+                    <th className="text-left p-3 border-r border-gray-300 font-medium">
+                      Date/Time
+                    </th>
+                    <th className="text-left p-3 font-medium">Location</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cargoDetails.milestones.map((milestone, index) => (
+                    <tr key={index} className="border-b border-gray-300">
+                      <td className="p-3 border-r border-gray-300 font-mono">
+                        {milestone.code}
+                      </td>
+                      <td className="p-3 border-r border-gray-300">
+                        {milestone.description || "N/A"}
+                      </td>
+                      <td className="p-3 border-r border-gray-300">
+                        {milestone.statusDateTime}
+                      </td>
+                      <td className="p-3">
+                        {milestone.city}, {milestone.state}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Attachments Section */}
+      {cargoDetails.attachments && cargoDetails.attachments.length > 0 && (
+        <div>
+          <h2 className="text-xl font-bold mb-4">Attachments</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {cargoDetails.attachments.map((attachment, index) => (
+              <a
+                key={index}
+                href={attachment}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors group"
+              >
+                <FileText className="h-6 w-6 mr-3 text-primary" />
+                <div className="flex-1">
+                  <span className="font-medium group-hover:text-primary transition-colors">
+                    Document {index + 1}
+                  </span>
+                  <p className="text-sm text-gray-500">PDF Document</p>
                 </div>
+                <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-primary transition-colors" />
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Pieces (Man/Rec/Plt)</div>
-                    <div>
-                      {cargoDetails.piecesManifested} /{" "}
-                      {cargoDetails.piecesReceived} /{" "}
-                      {cargoDetails.palletsReceived}
-                    </div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Weight</div>
-                    <div>{cargoDetails.weightInLBS} Lbs</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Volume</div>
-                    <div>{cargoDetails.volumeInCBM} CBM</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Headload</div>
-                    <div>{cargoDetails.headload}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Free Time Expires</div>
-                    <div>{cargoDetails.freeTimeExpiresDate}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Cargo Description</div>
-                    <div>{cargoDetails.cargoDescription}</div>
-                  </div>
+      {/* Gate Pass Section (Conditional) */}
+      {showGatePass && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl font-bold">
+              Gate Pass Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="font-medium text-blue-900">Gate Pass Number:</p>
+                  <p className="text-blue-800">
+                    GP-{cargoDetails.customerReference}
+                  </p>
+                </div>
+                <div>
+                  <p className="font-medium text-blue-900">Valid Until:</p>
+                  <p className="text-blue-800">
+                    {cargoDetails.freeTimeExpiresDate}
+                  </p>
+                </div>
+                <div>
+                  <p className="font-medium text-blue-900">
+                    Authorized Driver:
+                  </p>
+                  <p className="text-blue-800">To be assigned</p>
+                </div>
+                <div>
+                  <p className="font-medium text-blue-900">
+                    Special Instructions:
+                  </p>
+                  <p className="text-blue-800">Exchange pallets required</p>
                 </div>
               </div>
-
-              {cargoDetails.attachments &&
-                cargoDetails.attachments.length > 0 && (
-                  <div className="mt-8">
-                    <h3 className="font-medium text-lg mb-4">Attachments</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {cargoDetails.attachments.map((attachment, index) => (
-                        <a
-                          key={index}
-                          href={attachment}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center p-3 border rounded-md hover:bg-muted transition-colors"
-                        >
-                          <FileText className="h-5 w-5 mr-2 text-primary" />
-                          <span className="truncate">
-                            Attachment {index + 1}
-                          </span>
-                          <ExternalLink className="h-4 w-4 ml-auto text-muted-foreground" />
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="pickup-requirements">
-          <Card>
-            <CardHeader>
-              <CardTitle>Pick Up Requirements</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Status</div>
-                    <div>{cargoDetails.pickUpRequirements.status}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">
-                      Pick Up Number (Job-Lot Number)
-                    </div>
-                    <div>{cargoDetails.pickUpRequirements.pickUpNumber}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Customs Release</div>
-                    <div>{cargoDetails.pickUpRequirements.customsRelease}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Freight Release</div>
-                    <div>{cargoDetails.pickUpRequirements.freightRelease}</div>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Delivery Order</div>
-                    <div>{cargoDetails.pickUpRequirements.deliveryOrder}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Cargo On Hold</div>
-                    <div>{cargoDetails.pickUpRequirements.cargoOnHold}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Marks Hold</div>
-                    <div>{cargoDetails.pickUpRequirements.marksHold}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Exchange Pallets</div>
-                    <div>{cargoDetails.pickUpRequirements.exchangePallet}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Vessel ETA</div>
-                    <div>{cargoDetails.vesselETA}</div>
-                  </div>
-                </div>
+              <div className="mt-4 pt-4 border-t border-blue-200">
+                <Button className="bg-blue-600 hover:bg-blue-700">
+                  <Download className="h-4 w-4 mr-2" />
+                  Download Gate Pass
+                </Button>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="shipping-info">
-          <Card>
-            <CardHeader>
-              <CardTitle>Shipping Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">ATA</div>
-                    <div>{cargoDetails.shippingInformation.ata}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">ETA</div>
-                    <div>{cargoDetails.shippingInformation.eta}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Pick Up Agent</div>
-                    <div>{cargoDetails.shippingInformation.pickUpAgent}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Pro Number</div>
-                    <div>{cargoDetails.shippingInformation.proNumber}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Delivery Pro Number</div>
-                    <div>
-                      {cargoDetails.shippingInformation.releaseNumber || "N/A"}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Ship Date</div>
-                    <div>{cargoDetails.shippingInformation.shipDate}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Destination</div>
-                    <div>{cargoDetails.shippingInformation.destination}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">IT Number</div>
-                    <div>{cargoDetails.shippingInformation.itNumber}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Load Number</div>
-                    <div>{cargoDetails.shippingInformation.loadNumber}</div>
-                  </div>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="font-medium">Trailer Number</div>
-                    <div>{cargoDetails.shippingInformation.trailerNumber}</div>
-                  </div>
-                </div>
-              </div>
-
-              {cargoDetails.milestones &&
-                cargoDetails.milestones.length > 0 && (
-                  <div className="mt-8">
-                    <h3 className="font-medium text-lg mb-4">Milestones</h3>
-                    <div className="overflow-x-auto">
-                      <table className="w-full border-collapse">
-                        <thead>
-                          <tr className="bg-muted">
-                            <th className="text-left p-2 border">Code</th>
-                            <th className="text-left p-2 border">
-                              Description
-                            </th>
-                            <th className="text-left p-2 border">Date/Time</th>
-                            <th className="text-left p-2 border">Location</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {cargoDetails.milestones.map((milestone, index) => (
-                            <tr key={index} className="border-b">
-                              <td className="p-2 border">{milestone.code}</td>
-                              <td className="p-2 border">
-                                {milestone.description || "N/A"}
-                              </td>
-                              <td className="p-2 border">
-                                {milestone.statusDateTime}
-                              </td>
-                              <td className="p-2 border">
-                                {milestone.city}, {milestone.state}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
