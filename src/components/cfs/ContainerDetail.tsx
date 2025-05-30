@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { fetchContainerDetails } from "@/lib/api";
 import { XanoContainerResponse } from "@/types/api";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -9,139 +10,6 @@ import { Link, useParams } from "react-router-dom";
 interface RouteParams extends Record<string, string> {
   containerNumber: string;
 }
-
-// Mock data for demonstration - replace with actual API call
-const mockContainerData: XanoContainerResponse = {
-  id: "1",
-  containerNumber: "OOCU9204114",
-  jobNumber: "JOB123",
-  location: "Atlanta",
-  masterBillNumber: "OOLU2756717220",
-  vesselName: "OOCL BERLIN",
-  customerReference: "LSI3018159",
-  status: "Available",
-  stgReferenceNumber: "865853",
-  vesselETA: "05/05/25",
-  availableAtPier: "05/05/25",
-  appointmentDate: "",
-  outgatedDate: "05/05/25",
-  dateIn: "05/05/25",
-  stripDate: "05/06/25",
-  availableAtSTG: "05/06/25",
-  returnEmptyDate: "05/06/25",
-  goDate: "05/20/25",
-  containerAttachments: [],
-  cfsLotDetails: [
-    {
-      amsBlNumber: "AMIGL250109195A",
-      houseBillNumber: "AMIGL250109195A",
-      piecesReceived: "280",
-      piecesManifested: "280",
-      piecesType: "CTN",
-      pounds: "8025",
-      cbm: "12.309",
-      description: "TONGUE DEP",
-      destination: "",
-      headload: "",
-      hold: "",
-      marksHold: "",
-      hazmat: "",
-      shipDate: "07-MAY-2025",
-      jobNumber: "JOB123",
-      lotNumber: "01",
-    },
-    {
-      amsBlNumber: "AMIGL250112614A",
-      houseBillNumber: "AMIGL250112614AC",
-      piecesReceived: "931",
-      piecesManifested: "931",
-      piecesType: "CTN",
-      pounds: "13951",
-      cbm: "14.86",
-      description: "TURBOCHARG",
-      destination: "",
-      headload: "",
-      hold: "",
-      marksHold: "",
-      hazmat: "",
-      shipDate: "07-MAY-2025",
-      jobNumber: "JOB123",
-      lotNumber: "02",
-    },
-    {
-      amsBlNumber: "CCFEATL25031579",
-      houseBillNumber: "AMIGL250117448A",
-      piecesReceived: "4",
-      piecesManifested: "4",
-      piecesType: "CTN",
-      pounds: "4409",
-      cbm: "5.3",
-      description: "FABRIC",
-      destination: "",
-      headload: "",
-      hold: "",
-      marksHold: "",
-      hazmat: "",
-      shipDate: "06-MAY-2025",
-      jobNumber: "JOB123",
-      lotNumber: "03",
-    },
-    {
-      amsBlNumber: "AMIGL250118033A",
-      houseBillNumber: "AMIGL250118033A",
-      piecesReceived: "10",
-      piecesManifested: "10",
-      piecesType: "PKG",
-      pounds: "4630",
-      cbm: "15.88",
-      description: "LOUVER ACO",
-      destination: "",
-      headload: "",
-      hold: "",
-      marksHold: "",
-      hazmat: "",
-      shipDate: "07-MAY-2025",
-      jobNumber: "JOB123",
-      lotNumber: "04",
-    },
-    {
-      amsBlNumber: "CCFEATL25032145",
-      houseBillNumber: "AMIGL250118611A",
-      piecesReceived: "2",
-      piecesManifested: "2",
-      piecesType: "CTN",
-      pounds: "2798",
-      cbm: "5",
-      description: "PROTECTOR",
-      destination: "",
-      headload: "",
-      hold: "",
-      marksHold: "",
-      hazmat: "",
-      shipDate: "06-MAY-2025",
-      jobNumber: "JOB123",
-      lotNumber: "05",
-    },
-    {
-      amsBlNumber: "AMIGL250123530A",
-      houseBillNumber: "AMIGL250123530AC",
-      piecesReceived: "8",
-      piecesManifested: "8",
-      piecesType: "PKG",
-      pounds: "6695",
-      cbm: "1.77",
-      description: "SHAFT",
-      destination: "",
-      headload: "",
-      hold: "",
-      marksHold: "",
-      hazmat: "",
-      shipDate: "08-MAY-2025",
-      jobNumber: "JOB123",
-      lotNumber: "06",
-    },
-  ],
-};
 
 const ContainerDetail: React.FC = () => {
   const { containerNumber } = useParams<RouteParams>();
@@ -160,14 +28,19 @@ const ContainerDetail: React.FC = () => {
 
       try {
         setLoading(true);
-        // For now, using mock data - replace with actual API call
-        setTimeout(() => {
-          setContainerData(mockContainerData);
-          setLoading(false);
-        }, 1000);
+        const details = await fetchContainerDetails(containerNumber);
+        
+        if (details) {
+          setContainerData(details);
+          setError(null);
+        } else {
+          setError("Failed to load cargo details. Please try again later.");
+        }
       } catch (err) {
         console.error("Error loading container data:", err);
         setError("An error occurred while loading container data.");
+        setLoading(false);
+      } finally {
         setLoading(false);
       }
     };
@@ -495,7 +368,7 @@ const ContainerDetail: React.FC = () => {
                     >
                       <TableCell>
                         <Link
-                          to={`/cfs-lots/${containerData.stgReferenceNumber}/${lot.lotNumber}`}
+                          to={`/cfs-availability/containers/job/${lot.jobNumber}-${lot.lotNumber}`}
                           className="text-primary hover:underline"
                         >
                           {lot.amsBlNumber}
@@ -503,7 +376,7 @@ const ContainerDetail: React.FC = () => {
                       </TableCell>
                       <TableCell>
                         <Link
-                          to={`/cfs-lots/${containerData.stgReferenceNumber}/${lot.lotNumber}`}
+                          to={`/cfs-availability/containers/job/${lot.jobNumber}`}
                           className="text-primary hover:underline"
                         >
                           {lot.houseBillNumber}

@@ -1,27 +1,8 @@
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import useContainers, { Container } from "@/hooks/useContainers";
-import {
-  ChevronFirst,
-  ChevronLast,
-  ChevronLeft,
-  ChevronRight,
-  Loader2,
-} from "lucide-react";
+import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -114,7 +95,7 @@ const Containers = ({ payload }: ContainersProps = {}) => {
                   <TableCell>{container.location}</TableCell>
                   <TableCell>
                     <Link
-                      to={`/containers/detail/${container.number}`}
+                      to={`/cfs-availability/containers/detail/${container.number}`}
                       className="text-primary hover:underline font-medium"
                     >
                       {container.number}
